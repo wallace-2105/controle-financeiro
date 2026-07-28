@@ -1,10 +1,10 @@
 @import "tailwindcss" source(none);
-@source "../src";
 @import "tw-animate-css";
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap');
 
-@custom-variant dark (&:is(.dark *));
-
-/*
+@source "../src";
+@custom-variant dark (&:is(.dark *));/*
  * ══════════════════════════════════════════════════════════════
  *  SPARKLE CASH — Premium Financial Design System
  * ══════════════════════════════════════════════════════════════
@@ -21,8 +21,6 @@
  *  - Display: DM Serif Display (valores monetários grandes)
  */
 
-/* ── Google Fonts ── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap');
 
 /* ── Tailwind theme tokens ── */
 @theme inline {
