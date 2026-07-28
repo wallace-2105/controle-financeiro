@@ -4,7 +4,7 @@ import { ResumoCard } from "@/components/finance/ResumoCard";
 import { GraficoCategorias } from "@/components/finance/GraficoCategorias";
 import { GraficoEvolucao } from "@/components/finance/GraficoEvolucao";
 import { MesSelector } from "@/components/finance/MesSelector";
-import { useResumo, useEvolucao } from "@/hooks/use-resumo";
+import { useResumo } from "@/hooks/use-resumo";
 import { useTransacoes } from "@/hooks/use-transacoes";
 import { useMemo, useState } from "react";
 import { ArrowDownRight, ArrowUpRight, Wallet } from "lucide-react";
@@ -30,16 +30,24 @@ function DashboardContent() {
   const [mes, setMes] = useState(now.getMonth() + 1);
   const [ano, setAno] = useState(now.getFullYear());
 
-  // Buscar transações sem filtro para gerar a lista de meses disponíveis
+  // Busca todas as transações para montar a lista de meses disponíveis no seletor
   const { data: allTransacoes } = useTransacoes();
+
+  // Gera a lista de meses que têm transações + garante que o mês atual SEMPRE aparece
   const mesesDisponiveis = useMemo(() => {
-    if (!allTransacoes) return [];
-    const s = new Set(allTransacoes.map((t) => t.data.slice(0, 7)));
-    return Array.from(s).sort((a, b) => b.localeCompare(a));
+    const mesAtual = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    const set = new Set<string>([mesAtual]); // mês atual sempre está disponível
+    if (allTransacoes) {
+      for (const t of allTransacoes) {
+        set.add(t.data.slice(0, 7));
+      }
+    }
+    return Array.from(set).sort((a, b) => b.localeCompare(a));
   }, [allTransacoes]);
 
   const { data: resumo, isLoading } = useResumo(mes, ano);
 
+  // "2026-07" format para o MesSelector
   const mesKey = `${ano}-${String(mes).padStart(2, "0")}`;
 
   const handleMesChange = (v: string) => {
@@ -63,13 +71,28 @@ function DashboardContent() {
       </div>
 
       {isLoading ? (
-        <div className="text-sm text-muted-foreground">Carregando...</div>
+        <div className="text-sm text-muted-foreground animate-pulse">Carregando dados do mês...</div>
       ) : (
         <>
           <div className="grid gap-4 md:grid-cols-3">
-            <ResumoCard label="Receitas do mês" value={resumo?.totalReceitas ?? 0} icon={ArrowUpRight} tone="receita" />
-            <ResumoCard label="Despesas do mês" value={resumo?.totalDespesas ?? 0} icon={ArrowDownRight} tone="despesa" />
-            <ResumoCard label="Saldo do mês" value={resumo?.saldo ?? 0} icon={Wallet} tone="saldo" />
+            <ResumoCard
+              label="Receitas do mês"
+              value={resumo?.totalReceitas ?? 0}
+              icon={ArrowUpRight}
+              tone="receita"
+            />
+            <ResumoCard
+              label="Despesas do mês"
+              value={resumo?.totalDespesas ?? 0}
+              icon={ArrowDownRight}
+              tone="despesa"
+            />
+            <ResumoCard
+              label="Saldo do mês"
+              value={resumo?.saldo ?? 0}
+              icon={Wallet}
+              tone="saldo"
+            />
           </div>
 
           <div className="grid gap-4 lg:grid-cols-2">

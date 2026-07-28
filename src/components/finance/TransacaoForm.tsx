@@ -113,15 +113,24 @@ export function TransacaoForm({ open, onOpenChange, editing }: Props) {
               }}
               className="grid grid-cols-2 gap-2"
             >
-              <label className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 cursor-pointer has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-500/5">
-                <RadioGroupItem value="receita" />
-                <span className="text-sm font-medium">Receita</span>
+              <label className="flex flex-col gap-0.5 rounded-lg border border-border px-3 py-2 cursor-pointer has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-500/5">
+                <span className="flex items-center gap-2">
+                  <RadioGroupItem value="receita" />
+                  <span className="text-sm font-medium">Receita</span>
+                </span>
+                <span className="text-xs text-muted-foreground pl-6">Salário, freelance, venda...</span>
               </label>
-              <label className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 cursor-pointer has-[:checked]:border-rose-500 has-[:checked]:bg-rose-500/5">
-                <RadioGroupItem value="despesa" />
-                <span className="text-sm font-medium">Despesa</span>
+              <label className="flex flex-col gap-0.5 rounded-lg border border-border px-3 py-2 cursor-pointer has-[:checked]:border-rose-500 has-[:checked]:bg-rose-500/5">
+                <span className="flex items-center gap-2">
+                  <RadioGroupItem value="despesa" />
+                  <span className="text-sm font-medium">Despesa</span>
+                </span>
+                <span className="text-xs text-muted-foreground pl-6">Conta, compra, serviço...</span>
               </label>
             </RadioGroup>
+            <p className="text-xs text-muted-foreground">
+              💡 O tipo filtra as categorias disponíveis abaixo.
+            </p>
           </div>
 
           <div className="space-y-2">
@@ -167,16 +176,26 @@ export function TransacaoForm({ open, onOpenChange, editing }: Props) {
                 <SelectValue placeholder="Selecione uma categoria" />
               </SelectTrigger>
               <SelectContent>
-                {catsFiltradas.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    <span className="inline-flex items-center gap-2">
-                      <span className="h-2.5 w-2.5 rounded-full" style={{ background: c.cor }} />
-                      {c.nome}
-                    </span>
-                  </SelectItem>
-                ))}
+                {catsFiltradas.length === 0 ? (
+                  <div className="py-3 px-2 text-center text-xs text-muted-foreground">
+                    Nenhuma categoria de {tipo} cadastrada.
+                    <br />Crie uma em &quot;Categorias&quot; primeiro.
+                  </div>
+                ) : (
+                  catsFiltradas.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      <span className="inline-flex items-center gap-2">
+                        <span className="h-2.5 w-2.5 rounded-full" style={{ background: c.cor }} />
+                        {c.nome}
+                      </span>
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
+            {errors.categoriaId && (
+              <p className="text-xs text-rose-500">Selecione uma categoria.</p>
+            )}
           </div>
 
           <DialogFooter>
