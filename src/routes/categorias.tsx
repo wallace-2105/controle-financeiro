@@ -111,7 +111,7 @@ function CategoriasContent() {
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirmed}
-              className="bg-rose-600 hover:bg-rose-700 focus:ring-rose-600"
+              className="bg-despesa text-despesa-foreground hover:bg-despesa/90 focus:ring-despesa"
             >
               Excluir
             </AlertDialogAction>
@@ -135,8 +135,8 @@ type GroupProps = {
 
 function CategoriaGroup({ titulo, itens, editingId, onEdit, onCancelEdit, onDelete }: GroupProps) {
   return (
-    <div className="rounded-xl border border-border bg-card overflow-hidden">
-      <div className="px-5 py-3 border-b border-border flex items-center justify-between">
+    <div className="rounded-xl border border-border/40 bg-card overflow-hidden shadow-card">
+      <div className="px-6 py-4 border-b border-border/40 flex items-center justify-between bg-muted/20">
         <div className="font-semibold tracking-tight">{titulo}</div>
         <div className="text-xs text-muted-foreground">
           {itens.length} {itens.length === 1 ? "categoria" : "categorias"}
@@ -148,13 +148,13 @@ function CategoriaGroup({ titulo, itens, editingId, onEdit, onCancelEdit, onDele
           Nenhuma categoria cadastrada.
         </div>
       ) : (
-        <ul className="divide-y divide-border">
+        <ul className="divide-y divide-border/40">
           {itens.map((c) => {
             const isBeingEdited = c.id === editingId;
             return (
               <li
                 key={c.id}
-                className={`flex items-center justify-between px-5 py-3 transition-colors ${
+                className={`flex items-center justify-between px-6 py-3.5 transition-colors duration-200 ${
                   isBeingEdited
                     ? "bg-primary/5 ring-1 ring-inset ring-primary/20"
                     : "hover:bg-accent/30"
@@ -195,7 +195,7 @@ function CategoriaGroup({ titulo, itens, editingId, onEdit, onCancelEdit, onDele
                     size="icon"
                     variant="ghost"
                     onClick={() => onDelete(c)}
-                    className="h-8 w-8 text-rose-500 hover:text-rose-600 hover:bg-rose-500/10"
+                    className="h-8 w-8 text-muted-foreground hover:text-despesa hover:bg-despesa/10 transition-colors duration-200"
                     aria-label={`Excluir ${c.nome}`}
                     title="Excluir categoria"
                   >

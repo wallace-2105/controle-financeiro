@@ -113,14 +113,14 @@ export function TransacaoForm({ open, onOpenChange, editing }: Props) {
               }}
               className="grid grid-cols-2 gap-2"
             >
-              <label className="flex flex-col gap-0.5 rounded-lg border border-border px-3 py-2 cursor-pointer has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-500/5">
+              <label className="flex flex-col gap-0.5 rounded-xl border border-border/60 px-3 py-2.5 cursor-pointer transition-all duration-200 has-[:checked]:border-receita has-[:checked]:bg-receita/5">
                 <span className="flex items-center gap-2">
                   <RadioGroupItem value="receita" />
                   <span className="text-sm font-medium">Receita</span>
                 </span>
                 <span className="text-xs text-muted-foreground pl-6">Salário, freelance, venda...</span>
               </label>
-              <label className="flex flex-col gap-0.5 rounded-lg border border-border px-3 py-2 cursor-pointer has-[:checked]:border-rose-500 has-[:checked]:bg-rose-500/5">
+              <label className="flex flex-col gap-0.5 rounded-xl border border-border/60 px-3 py-2.5 cursor-pointer transition-all duration-200 has-[:checked]:border-despesa has-[:checked]:bg-despesa/5">
                 <span className="flex items-center gap-2">
                   <RadioGroupItem value="despesa" />
                   <span className="text-sm font-medium">Despesa</span>
@@ -140,7 +140,7 @@ export function TransacaoForm({ open, onOpenChange, editing }: Props) {
               value={descricao}
               onChange={(e) => setDescricao(e.target.value)}
               placeholder="Ex: Supermercado"
-              className={errors.descricao ? "border-rose-500" : ""}
+              className={errors.descricao ? "border-despesa" : ""}
             />
           </div>
 
@@ -154,7 +154,7 @@ export function TransacaoForm({ open, onOpenChange, editing }: Props) {
                 value={valor}
                 onChange={(e) => setValor(e.target.value)}
                 placeholder="0,00"
-                className={errors.valor ? "border-rose-500" : ""}
+                className={errors.valor ? "border-despesa" : ""}
               />
             </div>
             <div className="space-y-2">
@@ -164,7 +164,7 @@ export function TransacaoForm({ open, onOpenChange, editing }: Props) {
                 type="date"
                 value={data}
                 onChange={(e) => setData(e.target.value)}
-                className={errors.data ? "border-rose-500" : ""}
+                className={errors.data ? "border-despesa" : ""}
               />
             </div>
           </div>
@@ -172,7 +172,7 @@ export function TransacaoForm({ open, onOpenChange, editing }: Props) {
           <div className="space-y-2">
             <Label>Categoria</Label>
             <Select value={categoriaId} onValueChange={setCategoriaId}>
-              <SelectTrigger className={errors.categoriaId ? "border-rose-500" : ""}>
+              <SelectTrigger className={errors.categoriaId ? "border-despesa" : ""}>
                 <SelectValue placeholder="Selecione uma categoria" />
               </SelectTrigger>
               <SelectContent>
@@ -194,7 +194,7 @@ export function TransacaoForm({ open, onOpenChange, editing }: Props) {
               </SelectContent>
             </Select>
             {errors.categoriaId && (
-              <p className="text-xs text-rose-500">Selecione uma categoria.</p>
+              <p className="text-xs text-despesa">Selecione uma categoria.</p>
             )}
           </div>
 

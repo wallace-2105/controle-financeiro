@@ -120,11 +120,11 @@ export function CategoriaForm({ editing = null, onCancelEdit }: Props) {
             value={nome}
             onChange={(e) => { setNome(e.target.value); setErr(false); }}
             placeholder="Ex: Assinaturas"
-            className={err ? "border-rose-500 focus-visible:ring-rose-500" : ""}
+            className={err ? "border-despesa focus-visible:ring-despesa" : ""}
           />
         </div>
         {err && (
-          <p className="text-xs text-rose-500">O nome é obrigatório.</p>
+          <p className="text-xs text-despesa">O nome é obrigatório.</p>
         )}
       </div>
 
@@ -135,11 +135,11 @@ export function CategoriaForm({ editing = null, onCancelEdit }: Props) {
           onValueChange={(v) => setTipo(v as "receita" | "despesa")}
           className="grid grid-cols-2 gap-2"
         >
-          <label className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 cursor-pointer has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-500/5 transition-colors">
+          <label className="flex items-center gap-2 rounded-xl border border-border/60 px-3 py-2.5 cursor-pointer transition-all duration-200 has-[:checked]:border-receita has-[:checked]:bg-receita/5">
             <RadioGroupItem value="receita" />
             <span className="text-sm font-medium">Receita</span>
           </label>
-          <label className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 cursor-pointer has-[:checked]:border-rose-500 has-[:checked]:bg-rose-500/5 transition-colors">
+          <label className="flex items-center gap-2 rounded-xl border border-border/60 px-3 py-2.5 cursor-pointer transition-all duration-200 has-[:checked]:border-despesa has-[:checked]:bg-despesa/5">
             <RadioGroupItem value="despesa" />
             <span className="text-sm font-medium">Despesa</span>
           </label>

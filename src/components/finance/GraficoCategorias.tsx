@@ -2,10 +2,29 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recha
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { formatBRL } from "@/lib/finance-format";
 import type { CategoriaTotalItem } from "@/services/api";
+import { PieChartIcon } from "lucide-react";
 
 type Props = {
   categorias: CategoriaTotalItem[];
 };
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+function PremiumTooltip({ active, payload }: any) {
+  if (!active || !payload?.length) return null;
+  const item = payload[0];
+  return (
+    <div className="bg-card shadow-card-hover rounded-xl px-4 py-3 border border-border/40">
+      <div className="flex items-center gap-2 mb-1">
+        <span
+          className="h-2.5 w-2.5 rounded-full"
+          style={{ background: item.payload.cor }}
+        />
+        <span className="text-sm font-medium text-foreground">{item.name}</span>
+      </div>
+      <div className="text-lg font-display text-foreground">{formatBRL(item.value)}</div>
+    </div>
+  );
+}
 
 export function GraficoCategorias({ categorias }: Props) {
   const data = categorias
@@ -13,9 +32,12 @@ export function GraficoCategorias({ categorias }: Props) {
     .map((c) => ({ name: c.nome, value: c.total, cor: c.cor }));
 
   return (
-    <Card className="border-border/60">
-      <CardHeader>
-        <CardTitle className="text-base">Despesas por categoria</CardTitle>
+    <Card className="border-border/40 shadow-card animate-fade-in-up animate-delay-1">
+      <CardHeader className="pb-2">
+        <div className="flex items-center gap-2">
+          <PieChartIcon className="h-4 w-4 text-muted-foreground" />
+          <CardTitle className="text-base font-semibold">Despesas por categoria</CardTitle>
+        </div>
       </CardHeader>
       <CardContent>
         {data.length === 0 ? (
@@ -30,28 +52,22 @@ export function GraficoCategorias({ categorias }: Props) {
                   data={data}
                   dataKey="value"
                   nameKey="name"
-                  innerRadius={55}
-                  outerRadius={90}
-                  paddingAngle={2}
+                  innerRadius={60}
+                  outerRadius={95}
+                  paddingAngle={3}
+                  strokeWidth={0}
                 >
                   {data.map((d, i) => (
                     <Cell key={i} fill={d.cor} stroke="transparent" />
                   ))}
                 </Pie>
-                <Tooltip
-                  formatter={(v: number) => formatBRL(v)}
-                  contentStyle={{
-                    background: "var(--color-popover)",
-                    border: "1px solid var(--color-border)",
-                    borderRadius: 8,
-                    fontSize: 12,
-                  }}
-                />
+                <Tooltip content={<PremiumTooltip />} />
                 <Legend
                   verticalAlign="bottom"
                   height={36}
                   iconType="circle"
-                  wrapperStyle={{ fontSize: 12 }}
+                  iconSize={8}
+                  wrapperStyle={{ fontSize: 12, color: "var(--color-muted-foreground)" }}
                 />
               </PieChart>
             </ResponsiveContainer>

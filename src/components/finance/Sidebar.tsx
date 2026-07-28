@@ -1,5 +1,5 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, ListChecks, Tags, LogOut, Wallet } from "lucide-react";
+import { LayoutDashboard, ListChecks, Tags, LogOut, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -20,14 +20,24 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="hidden md:flex md:flex-col w-60 shrink-0 border-r border-border bg-card min-h-screen">
-      <div className="flex items-center gap-2 px-6 h-16 border-b border-border">
-        <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center">
-          <Wallet className="h-5 w-5 text-primary" />
+    <aside className="hidden md:flex md:flex-col w-64 shrink-0 bg-sidebar min-h-screen">
+      {/* ── Brand ── */}
+      <div className="flex items-center gap-3 px-6 h-[72px]">
+        <div className="h-10 w-10 rounded-xl bg-sidebar-primary/15 flex items-center justify-center">
+          <Sparkles className="h-5 w-5 text-sidebar-primary" />
         </div>
-        <div className="font-semibold tracking-tight">Finanças</div>
+        <div>
+          <div className="font-semibold text-sidebar-foreground tracking-tight">
+            Sparkle Cash
+          </div>
+          <div className="text-[11px] text-sidebar-foreground/50 font-medium tracking-wide">
+            CONTROLE FINANCEIRO
+          </div>
+        </div>
       </div>
-      <nav className="flex-1 p-3 space-y-1">
+
+      {/* ── Navigation ── */}
+      <nav className="flex-1 px-3 pt-4 space-y-1">
         {items.map((it) => {
           const active = pathname.startsWith(it.to);
           const Icon = it.icon;
@@ -36,24 +46,26 @@ export function Sidebar() {
               key={it.to}
               to={it.to}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                "flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200",
                 active
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                  ? "bg-sidebar-primary/15 text-sidebar-primary shadow-[inset_0_0_0_1px] shadow-sidebar-primary/20"
+                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
               )}
             >
-              <Icon className="h-4 w-4" />
+              <Icon className={cn("h-[18px] w-[18px]", active && "text-sidebar-primary")} />
               {it.label}
             </Link>
           );
         })}
       </nav>
-      <div className="p-3 border-t border-border">
+
+      {/* ── Logout ── */}
+      <div className="px-3 pb-6">
         <button
           onClick={handleLogout}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
+          className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-sidebar-foreground/50 hover:bg-sidebar-accent hover:text-sidebar-foreground/80 transition-all duration-200"
         >
-          <LogOut className="h-4 w-4" />
+          <LogOut className="h-[18px] w-[18px]" />
           Sair
         </button>
       </div>

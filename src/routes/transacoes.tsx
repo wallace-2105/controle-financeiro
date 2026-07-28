@@ -69,16 +69,17 @@ function TransacoesContent() {
           </div>
         </div>
         <Button
+          className="shadow-sm hover:shadow-md transition-all duration-200 bg-primary text-primary-foreground hover:bg-primary/90"
           onClick={() => {
             setEditing(null);
             setOpen(true);
           }}
         >
-          <Plus className="h-4 w-4" /> Nova transação
+          <Plus className="h-4 w-4 mr-1.5" /> Nova transação
         </Button>
       </div>
 
-      <div className="rounded-xl border border-border bg-card p-4 grid gap-3 md:grid-cols-[1fr_1fr_1fr] items-end">
+      <div className="rounded-xl border border-border/40 bg-card p-5 grid gap-4 md:grid-cols-[1fr_1fr_1fr] items-end shadow-card">
         <div className="space-y-1.5">
           <Label className="text-xs">Categoria</Label>
           <Select value={catFiltro} onValueChange={setCatFiltro}>

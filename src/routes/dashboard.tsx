@@ -74,24 +74,27 @@ function DashboardContent() {
         <div className="text-sm text-muted-foreground animate-pulse">Carregando dados do mês...</div>
       ) : (
         <>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-3">
             <ResumoCard
               label="Receitas do mês"
               value={resumo?.totalReceitas ?? 0}
               icon={ArrowUpRight}
               tone="receita"
+              delay={0}
             />
             <ResumoCard
               label="Despesas do mês"
               value={resumo?.totalDespesas ?? 0}
               icon={ArrowDownRight}
               tone="despesa"
+              delay={1}
             />
             <ResumoCard
               label="Saldo do mês"
               value={resumo?.saldo ?? 0}
               icon={Wallet}
               tone="saldo"
+              delay={2}
             />
           </div>
 
