@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useState } from "react";
-import { useFinance } from "@/store/finance-store";
+import { useCreateCategoria } from "@/hooks/use-categorias";
 import { toast } from "sonner";
 
 const CORES = [
@@ -12,7 +12,7 @@ const CORES = [
 ];
 
 export function CategoriaForm() {
-  const { addCategoria } = useFinance();
+  const createCategoria = useCreateCategoria();
   const [nome, setNome] = useState("");
   const [tipo, setTipo] = useState<"receita" | "despesa">("despesa");
   const [cor, setCor] = useState(CORES[0]);
@@ -21,10 +21,18 @@ export function CategoriaForm() {
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!nome.trim()) return setErr(true);
-    addCategoria({ nome: nome.trim(), tipo, cor });
-    setNome("");
-    setErr(false);
-    toast.success("Categoria criada");
+
+    createCategoria.mutate(
+      { nome: nome.trim(), tipo, cor },
+      {
+        onSuccess: () => {
+          setNome("");
+          setErr(false);
+          toast.success("Categoria criada");
+        },
+        onError: (error) => toast.error(error.message),
+      },
+    );
   };
 
   return (
@@ -76,8 +84,8 @@ export function CategoriaForm() {
           ))}
         </div>
       </div>
-      <Button type="submit" className="w-full">
-        Criar categoria
+      <Button type="submit" className="w-full" disabled={createCategoria.isPending}>
+        {createCategoria.isPending ? "Criando..." : "Criar categoria"}
       </Button>
     </form>
   );

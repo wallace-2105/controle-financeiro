@@ -2,19 +2,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 import { formatBRL, formatDate } from "@/lib/finance-format";
-import { useFinance } from "@/store/finance-store";
-import type { Transacao } from "@/mocks/dados";
+import type { TransacaoAPI, CategoriaAPI } from "@/services/api";
 import { cn } from "@/lib/utils";
 
 type Props = {
-  transacoes: Transacao[];
-  onEdit: (t: Transacao) => void;
-  onDelete: (t: Transacao) => void;
+  transacoes: TransacaoAPI[];
+  categorias: CategoriaAPI[];
+  onEdit: (t: TransacaoAPI) => void;
+  onDelete: (t: TransacaoAPI) => void;
 };
 
-export function TransacaoTabela({ transacoes, onEdit, onDelete }: Props) {
-  const { categorias } = useFinance();
-
+export function TransacaoTabela({ transacoes, categorias, onEdit, onDelete }: Props) {
   if (transacoes.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-border p-12 text-center text-sm text-muted-foreground">
@@ -34,8 +32,7 @@ export function TransacaoTabela({ transacoes, onEdit, onDelete }: Props) {
       </div>
       <ul className="divide-y divide-border">
         {transacoes.map((t) => {
-          const cat = categorias.find((c) => c.id === t.categoriaId);
-          const isReceita = cat?.tipo === "receita";
+          const isReceita = t.tipo === "receita";
           return (
             <li
               key={t.id}
@@ -44,19 +41,17 @@ export function TransacaoTabela({ transacoes, onEdit, onDelete }: Props) {
               <div className="col-span-2 md:col-span-1">
                 <div className="font-medium text-sm">{t.descricao}</div>
                 <div className="md:hidden text-xs text-muted-foreground mt-1">
-                  {cat?.nome} · {formatDate(t.data)}
+                  {t.categoriaNome} · {formatDate(t.data)}
                 </div>
               </div>
               <div className="hidden md:block">
-                {cat && (
-                  <Badge
-                    variant="outline"
-                    className="border-transparent text-xs font-medium"
-                    style={{ backgroundColor: `${cat.cor}20`, color: cat.cor }}
-                  >
-                    {cat.nome}
-                  </Badge>
-                )}
+                <Badge
+                  variant="outline"
+                  className="border-transparent text-xs font-medium"
+                  style={{ backgroundColor: `${t.categoriaCor}20`, color: t.categoriaCor }}
+                >
+                  {t.categoriaNome}
+                </Badge>
               </div>
               <div className="hidden md:block text-sm text-muted-foreground">
                 {formatDate(t.data)}

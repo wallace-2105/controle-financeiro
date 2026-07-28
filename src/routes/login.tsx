@@ -4,6 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Wallet } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
+import { toast } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -19,13 +22,30 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { login, registrar } = useAuth();
+
+  const [isRegistro, setIsRegistro] = useState(false);
+  const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock: sem autenticação real ainda
-    navigate({ to: "/dashboard" });
+    setLoading(true);
+    try {
+      if (isRegistro) {
+        await registrar(nome.trim(), email.trim(), senha);
+        toast.success("Conta criada com sucesso!");
+      } else {
+        await login(email.trim(), senha);
+      }
+      navigate({ to: "/dashboard" });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao autenticar");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -52,12 +72,28 @@ function LoginPage() {
       <div className="flex items-center justify-center p-6 md:p-12">
         <form onSubmit={submit} className="w-full max-w-sm space-y-6">
           <div className="space-y-2">
-            <h1 className="text-2xl font-semibold tracking-tight">Bem-vindo de volta</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">
+              {isRegistro ? "Criar conta" : "Bem-vindo de volta"}
+            </h1>
             <p className="text-sm text-muted-foreground">
-              Entre com sua conta para continuar.
+              {isRegistro
+                ? "Preencha seus dados para criar uma conta."
+                : "Entre com sua conta para continuar."}
             </p>
           </div>
           <div className="space-y-4">
+            {isRegistro && (
+              <div className="space-y-2">
+                <Label htmlFor="nome">Nome</Label>
+                <Input
+                  id="nome"
+                  required
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  placeholder="Seu nome"
+                />
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="email">E-mail</Label>
               <Input
@@ -75,23 +111,33 @@ function LoginPage() {
                 id="senha"
                 type="password"
                 required
+                minLength={6}
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
                 placeholder="••••••••"
               />
             </div>
           </div>
-          <Button type="submit" className="w-full">
-            Entrar
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading
+              ? "Carregando..."
+              : isRegistro
+                ? "Criar conta"
+                : "Entrar"}
           </Button>
           <div className="text-center text-sm text-muted-foreground">
-            Ainda não tem conta?{" "}
-            <Link to="/login" className="text-primary font-medium hover:underline">
-              Criar conta
-            </Link>
+            {isRegistro ? "Já tem uma conta? " : "Ainda não tem conta? "}
+            <button
+              type="button"
+              onClick={() => setIsRegistro(!isRegistro)}
+              className="text-primary font-medium hover:underline"
+            >
+              {isRegistro ? "Entrar" : "Criar conta"}
+            </button>
           </div>
         </form>
       </div>
+      <Toaster />
     </div>
   );
 }

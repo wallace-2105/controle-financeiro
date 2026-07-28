@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppLayout } from "@/components/finance/AppLayout";
 import { CategoriaForm } from "@/components/finance/CategoriaForm";
-import { useFinance } from "@/store/finance-store";
+import { useCategorias, useDeleteCategoria } from "@/hooks/use-categorias";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import type { CategoriaAPI } from "@/services/api";
 
 export const Route = createFileRoute("/categorias")({
   head: () => ({
@@ -23,21 +24,28 @@ export const Route = createFileRoute("/categorias")({
 });
 
 function CategoriasContent() {
-  const { categorias, removeCategoria } = useFinance();
+  const { data: categorias = [], isLoading } = useCategorias();
+  const deleteCategoria = useDeleteCategoria();
+
   const receitas = categorias.filter((c) => c.tipo === "receita");
   const despesas = categorias.filter((c) => c.tipo === "despesa");
+
+  const handleDelete = (id: string) => {
+    deleteCategoria.mutate(id, {
+      onSuccess: () => toast.success("Categoria removida"),
+      onError: (err) => toast.error(err.message),
+    });
+  };
+
+  if (isLoading) {
+    return <div className="text-sm text-muted-foreground">Carregando...</div>;
+  }
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_360px] max-w-6xl">
       <div className="space-y-6">
-        <Group titulo="Receitas" itens={receitas} onDelete={(id) => {
-          removeCategoria(id);
-          toast.success("Categoria removida");
-        }} />
-        <Group titulo="Despesas" itens={despesas} onDelete={(id) => {
-          removeCategoria(id);
-          toast.success("Categoria removida");
-        }} />
+        <Group titulo="Receitas" itens={receitas} onDelete={handleDelete} />
+        <Group titulo="Despesas" itens={despesas} onDelete={handleDelete} />
       </div>
       <CategoriaForm />
     </div>
@@ -50,7 +58,7 @@ function Group({
   onDelete,
 }: {
   titulo: string;
-  itens: { id: string; nome: string; cor: string; tipo: string }[];
+  itens: CategoriaAPI[];
   onDelete: (id: string) => void;
 }) {
   return (

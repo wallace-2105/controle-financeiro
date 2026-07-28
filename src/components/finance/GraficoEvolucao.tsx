@@ -9,28 +9,17 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { formatBRL, formatMonthLabel, monthKey } from "@/lib/finance-format";
-import { useFinance } from "@/store/finance-store";
-import { useMemo } from "react";
+import { formatBRL } from "@/lib/finance-format";
+import { useEvolucao } from "@/hooks/use-resumo";
 
 export function GraficoEvolucao() {
-  const { categorias, transacoes } = useFinance();
+  const { data: evolucao } = useEvolucao(6);
 
-  const data = useMemo(() => {
-    const map = new Map<string, { receitas: number; despesas: number }>();
-    for (const t of transacoes) {
-      const k = monthKey(t.data);
-      const cat = categorias.find((c) => c.id === t.categoriaId);
-      if (!cat) continue;
-      const row = map.get(k) ?? { receitas: 0, despesas: 0 };
-      if (cat.tipo === "receita") row.receitas += t.valor;
-      else row.despesas += t.valor;
-      map.set(k, row);
-    }
-    return Array.from(map.entries())
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([k, v]) => ({ mes: formatMonthLabel(k), ...v }));
-  }, [categorias, transacoes]);
+  const chartData = (evolucao?.meses ?? []).map((m) => ({
+    mes: m.label,
+    receitas: m.receitas,
+    despesas: m.despesas,
+  }));
 
   return (
     <Card className="border-border/60">
@@ -40,7 +29,7 @@ export function GraficoEvolucao() {
       <CardContent>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+            <BarChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
               <XAxis dataKey="mes" tick={{ fontSize: 12 }} stroke="var(--color-muted-foreground)" />
               <YAxis

@@ -4,10 +4,10 @@ import { ResumoCard } from "@/components/finance/ResumoCard";
 import { GraficoCategorias } from "@/components/finance/GraficoCategorias";
 import { GraficoEvolucao } from "@/components/finance/GraficoEvolucao";
 import { MesSelector } from "@/components/finance/MesSelector";
-import { useFinance } from "@/store/finance-store";
+import { useResumo, useEvolucao } from "@/hooks/use-resumo";
+import { useTransacoes } from "@/hooks/use-transacoes";
 import { useMemo, useState } from "react";
 import { ArrowDownRight, ArrowUpRight, Wallet } from "lucide-react";
-import { monthKey } from "@/lib/finance-format";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -26,24 +26,27 @@ export const Route = createFileRoute("/dashboard")({
 });
 
 function DashboardContent() {
-  const { categorias, transacoes } = useFinance();
-  const mesesDisponiveis = useMemo(() => {
-    const s = new Set(transacoes.map((t) => monthKey(t.data)));
-    return Array.from(s).sort((a, b) => b.localeCompare(a));
-  }, [transacoes]);
-  const [mes, setMes] = useState(mesesDisponiveis[0] ?? new Date().toISOString().slice(0, 7));
+  const now = new Date();
+  const [mes, setMes] = useState(now.getMonth() + 1);
+  const [ano, setAno] = useState(now.getFullYear());
 
-  const { receitas, despesas, saldo } = useMemo(() => {
-    let r = 0, d = 0;
-    for (const t of transacoes) {
-      if (!t.data.startsWith(mes)) continue;
-      const c = categorias.find((c) => c.id === t.categoriaId);
-      if (!c) continue;
-      if (c.tipo === "receita") r += t.valor;
-      else d += t.valor;
-    }
-    return { receitas: r, despesas: d, saldo: r - d };
-  }, [categorias, transacoes, mes]);
+  // Buscar transações sem filtro para gerar a lista de meses disponíveis
+  const { data: allTransacoes } = useTransacoes();
+  const mesesDisponiveis = useMemo(() => {
+    if (!allTransacoes) return [];
+    const s = new Set(allTransacoes.map((t) => t.data.slice(0, 7)));
+    return Array.from(s).sort((a, b) => b.localeCompare(a));
+  }, [allTransacoes]);
+
+  const { data: resumo, isLoading } = useResumo(mes, ano);
+
+  const mesKey = `${ano}-${String(mes).padStart(2, "0")}`;
+
+  const handleMesChange = (v: string) => {
+    const [a, m] = v.split("-");
+    setAno(Number(a));
+    setMes(Number(m));
+  };
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -52,19 +55,29 @@ function DashboardContent() {
           <div className="text-sm text-muted-foreground">Visão geral</div>
           <div className="text-xl font-semibold tracking-tight">Seu mês em números</div>
         </div>
-        <MesSelector value={mes} onChange={setMes} />
+        <MesSelector
+          value={mesKey}
+          onChange={handleMesChange}
+          meses={mesesDisponiveis}
+        />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <ResumoCard label="Receitas do mês" value={receitas} icon={ArrowUpRight} tone="receita" />
-        <ResumoCard label="Despesas do mês" value={despesas} icon={ArrowDownRight} tone="despesa" />
-        <ResumoCard label="Saldo do mês" value={saldo} icon={Wallet} tone="saldo" />
-      </div>
+      {isLoading ? (
+        <div className="text-sm text-muted-foreground">Carregando...</div>
+      ) : (
+        <>
+          <div className="grid gap-4 md:grid-cols-3">
+            <ResumoCard label="Receitas do mês" value={resumo?.totalReceitas ?? 0} icon={ArrowUpRight} tone="receita" />
+            <ResumoCard label="Despesas do mês" value={resumo?.totalDespesas ?? 0} icon={ArrowDownRight} tone="despesa" />
+            <ResumoCard label="Saldo do mês" value={resumo?.saldo ?? 0} icon={Wallet} tone="saldo" />
+          </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <GraficoCategorias mes={mes} />
-        <GraficoEvolucao />
-      </div>
+          <div className="grid gap-4 lg:grid-cols-2">
+            <GraficoCategorias categorias={resumo?.categorias ?? []} />
+            <GraficoEvolucao />
+          </div>
+        </>
+      )}
     </div>
   );
 }

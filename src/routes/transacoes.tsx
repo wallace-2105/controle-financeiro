@@ -16,10 +16,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useFinance } from "@/store/finance-store";
+import { useTransacoes, useDeleteTransacao } from "@/hooks/use-transacoes";
+import { useCategorias } from "@/hooks/use-categorias";
 import { useMemo, useState } from "react";
 import { Plus } from "lucide-react";
-import type { Transacao } from "@/mocks/dados";
+import type { TransacaoAPI } from "@/services/api";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/transacoes")({
@@ -39,21 +40,24 @@ export const Route = createFileRoute("/transacoes")({
 });
 
 function TransacoesContent() {
-  const { categorias, transacoes, removeTransacao } = useFinance();
+  const { data: categorias = [] } = useCategorias();
+  const { data: allTransacoes = [], isLoading } = useTransacoes();
+  const deleteTransacao = useDeleteTransacao();
+
   const [catFiltro, setCatFiltro] = useState<string>("todas");
   const [de, setDe] = useState("");
   const [ate, setAte] = useState("");
   const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<Transacao | null>(null);
-  const [toDelete, setToDelete] = useState<Transacao | null>(null);
+  const [editing, setEditing] = useState<TransacaoAPI | null>(null);
+  const [toDelete, setToDelete] = useState<TransacaoAPI | null>(null);
 
   const filtered = useMemo(() => {
-    return transacoes
+    return allTransacoes
       .filter((t) => (catFiltro === "todas" ? true : t.categoriaId === catFiltro))
       .filter((t) => (de ? t.data >= de : true))
       .filter((t) => (ate ? t.data <= ate : true))
       .sort((a, b) => b.data.localeCompare(a.data));
-  }, [transacoes, catFiltro, de, ate]);
+  }, [allTransacoes, catFiltro, de, ate]);
 
   return (
     <div className="space-y-5 max-w-6xl">
@@ -61,7 +65,7 @@ function TransacoesContent() {
         <div>
           <div className="text-sm text-muted-foreground">Todas as suas movimentações</div>
           <div className="text-xl font-semibold tracking-tight">
-            {filtered.length} transaç{filtered.length === 1 ? "ão" : "ões"}
+            {isLoading ? "Carregando..." : `${filtered.length} transaç${filtered.length === 1 ? "ão" : "ões"}`}
           </div>
         </div>
         <Button
@@ -106,6 +110,7 @@ function TransacoesContent() {
 
       <TransacaoTabela
         transacoes={filtered}
+        categorias={categorias}
         onEdit={(t) => {
           setEditing(t);
           setOpen(true);
@@ -120,7 +125,7 @@ function TransacoesContent() {
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir transação?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta ação não pode ser desfeita. A transação "{toDelete?.descricao}" será
+              Esta ação não pode ser desfeita. A transação &quot;{toDelete?.descricao}&quot; será
               removida.
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -129,8 +134,10 @@ function TransacoesContent() {
             <AlertDialogAction
               onClick={() => {
                 if (toDelete) {
-                  removeTransacao(toDelete.id);
-                  toast.success("Transação excluída");
+                  deleteTransacao.mutate(toDelete.id, {
+                    onSuccess: () => toast.success("Transação excluída"),
+                    onError: (err) => toast.error(err.message),
+                  });
                 }
                 setToDelete(null);
               }}

@@ -11,18 +11,21 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useEffect, useState } from "react";
-import { useFinance } from "@/store/finance-store";
-import type { Transacao } from "@/mocks/dados";
+import { useCategorias } from "@/hooks/use-categorias";
+import { useCreateTransacao, useUpdateTransacao } from "@/hooks/use-transacoes";
+import type { TransacaoAPI } from "@/services/api";
 import { toast } from "sonner";
 
 type Props = {
   open: boolean;
   onOpenChange: (o: boolean) => void;
-  editing: Transacao | null;
+  editing: TransacaoAPI | null;
 };
 
 export function TransacaoForm({ open, onOpenChange, editing }: Props) {
-  const { categorias, addTransacao, updateTransacao } = useFinance();
+  const { data: categorias = [] } = useCategorias();
+  const createTransacao = useCreateTransacao();
+  const updateTransacao = useUpdateTransacao();
 
   const [descricao, setDescricao] = useState("");
   const [valor, setValor] = useState("");
@@ -34,10 +37,9 @@ export function TransacaoForm({ open, onOpenChange, editing }: Props) {
   useEffect(() => {
     if (open) {
       if (editing) {
-        const cat = categorias.find((c) => c.id === editing.categoriaId);
         setDescricao(editing.descricao);
         setValor(String(editing.valor));
-        setTipo(cat?.tipo ?? "despesa");
+        setTipo(editing.tipo);
         setCategoriaId(editing.categoriaId);
         setData(editing.data);
       } else {
@@ -49,7 +51,7 @@ export function TransacaoForm({ open, onOpenChange, editing }: Props) {
       }
       setErrors({});
     }
-  }, [open, editing, categorias]);
+  }, [open, editing]);
 
   const catsFiltradas = categorias.filter((c) => c.tipo === tipo);
 
@@ -71,14 +73,28 @@ export function TransacaoForm({ open, onOpenChange, editing }: Props) {
     };
 
     if (editing) {
-      updateTransacao({ ...editing, ...payload });
-      toast.success("Transação atualizada");
+      updateTransacao.mutate(
+        { id: editing.id, ...payload },
+        {
+          onSuccess: () => {
+            toast.success("Transação atualizada");
+            onOpenChange(false);
+          },
+          onError: (err) => toast.error(err.message),
+        },
+      );
     } else {
-      addTransacao(payload);
-      toast.success("Transação criada");
+      createTransacao.mutate(payload, {
+        onSuccess: () => {
+          toast.success("Transação criada");
+          onOpenChange(false);
+        },
+        onError: (err) => toast.error(err.message),
+      });
     }
-    onOpenChange(false);
   };
+
+  const isSubmitting = createTransacao.isPending || updateTransacao.isPending;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -167,7 +183,9 @@ export function TransacaoForm({ open, onOpenChange, editing }: Props) {
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
-            <Button type="submit">{editing ? "Salvar" : "Criar"}</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Salvando..." : editing ? "Salvar" : "Criar"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

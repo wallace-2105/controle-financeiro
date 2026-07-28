@@ -1,25 +1,16 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { formatBRL } from "@/lib/finance-format";
-import { useFinance } from "@/store/finance-store";
-import { useMemo } from "react";
+import type { CategoriaTotalItem } from "@/services/api";
 
-export function GraficoCategorias({ mes }: { mes: string }) {
-  const { categorias, transacoes } = useFinance();
+type Props = {
+  categorias: CategoriaTotalItem[];
+};
 
-  const data = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const t of transacoes) {
-      if (!t.data.startsWith(mes)) continue;
-      const cat = categorias.find((c) => c.id === t.categoriaId);
-      if (!cat || cat.tipo !== "despesa") continue;
-      map.set(cat.id, (map.get(cat.id) ?? 0) + t.valor);
-    }
-    return Array.from(map.entries()).map(([id, valor]) => {
-      const cat = categorias.find((c) => c.id === id)!;
-      return { name: cat.nome, value: valor, cor: cat.cor };
-    });
-  }, [categorias, transacoes, mes]);
+export function GraficoCategorias({ categorias }: Props) {
+  const data = categorias
+    .filter((c) => c.tipo === "despesa")
+    .map((c) => ({ name: c.nome, value: c.total, cor: c.cor }));
 
   return (
     <Card className="border-border/60">
