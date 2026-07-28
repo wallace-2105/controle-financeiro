@@ -3,6 +3,10 @@
 Sistema de controle financeiro pessoal — cadastre suas receitas e despesas, acompanhe categorias e visualize sua saúde financeira mês a mês em um dashboard com gráficos.
 
 ## Visão geral
+<img width="944" height="538" alt="Captura de tela 2026-07-28 135619" src="https://github.com/user-attachments/assets/5e5560c6-f50f-486b-b37c-ceca9f9074d3" />
+<img width="959" height="539" alt="Captura de tela 2026-07-28 135521" src="https://github.com/user-attachments/assets/0a39c62d-d96d-462e-89ef-ea62ccf86294" />
+
+
 
 Este projeto nasceu de uma necessidade real: ter um controle financeiro simples, visual e sob meu próprio domínio (sem depender de planilhas soltas ou apps de terceiros). O sistema permite:
 
