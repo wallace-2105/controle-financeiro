@@ -14,7 +14,7 @@ export function Header({ title }: { title: string }) {
     : "??";
 
   return (
-    <header className="h-[72px] border-b border-border/60 bg-card/80 backdrop-blur-xl px-6 md:px-10 flex items-center justify-between">
+    <header className="sticky top-0 z-50 h-[72px] border-b border-border/40 bg-background/60 backdrop-blur-xl px-6 md:px-10 flex items-center justify-between shadow-[0_2px_10px_rgba(0,0,0,0.02)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.1)]">
       <h1 className="text-lg font-semibold tracking-tight text-foreground">{title}</h1>
       <div className="flex items-center gap-3">
         <div className="text-right hidden sm:block">

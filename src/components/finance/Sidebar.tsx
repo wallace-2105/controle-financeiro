@@ -20,7 +20,7 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="hidden md:flex md:flex-col w-64 shrink-0 bg-sidebar min-h-screen">
+    <aside className="hidden md:flex md:flex-col w-64 shrink-0 bg-sidebar bg-gradient-to-b from-transparent to-black/40 min-h-screen relative z-20 border-r border-white/10 dark:border-white/5 shadow-[1px_0_30px_rgba(0,0,0,0.15)]">
       {/* ── Brand ── */}
       <div className="flex items-center gap-3 px-6 h-[72px]">
         <div className="h-10 w-10 rounded-xl bg-sidebar-primary/15 flex items-center justify-center">
