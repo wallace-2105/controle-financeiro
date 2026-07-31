@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { Toaster } from "@/components/ui/sonner";
+import bgImage from "@/assets/premium-bg.png";
 
 export function AppLayout({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -9,7 +10,7 @@ export function AppLayout({ title, children }: { title: string; children: ReactN
       {/* Background Effects (Premium Image + Overlay) */}
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
         <img 
-          src="/premium-bg.png" 
+          src={bgImage} 
           alt="Premium Dashboard Background" 
           className="absolute inset-0 w-full h-full object-cover opacity-90" 
         />
