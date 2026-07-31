@@ -1,5 +1,5 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, ListChecks, Tags, LogOut, Sparkles } from "lucide-react";
+import { LayoutDashboard, ListChecks, Tags, LogOut, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -24,7 +24,7 @@ export function Sidebar() {
       {/* ── Brand ── */}
       <div className="flex items-center gap-3 px-6 h-[72px]">
         <div className="h-10 w-10 rounded-xl bg-sidebar-primary/15 flex items-center justify-center">
-          <Sparkles className="h-5 w-5 text-sidebar-primary" />
+          <BarChart3 className="h-5 w-5 text-sidebar-primary" />
         </div>
         <div>
           <div className="font-semibold text-sidebar-foreground tracking-tight">
