@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { Toaster } from "@/components/ui/sonner";
-import bgImage from "@/assets/capadefundo.avif";
+import bgImage from "@/assets/CAPANOVA.avif";
 
 export function AppLayout({ title, children }: { title: string; children: ReactNode }) {
   return (
