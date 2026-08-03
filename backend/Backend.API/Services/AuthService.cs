@@ -14,14 +14,13 @@ public class AuthService : IAuthService
     private static readonly (string Nome, TipoCategoria Tipo, string Cor)[] CategoriasIniciais =
     {
         ("Salário",       TipoCategoria.Receita, "#10b981"),
-        ("Freelance",     TipoCategoria.Receita, "#22c55e"),
+        ("Renda extra",   TipoCategoria.Receita, "#22c55e"),
         ("Investimentos", TipoCategoria.Receita, "#14b8a6"),
-        ("Alimentação",   TipoCategoria.Despesa, "#f97316"),
-        ("Transporte",    TipoCategoria.Despesa, "#3b82f6"),
+        ("Aluguel",       TipoCategoria.Despesa, "#ef4444"),
+        ("Mercado",       TipoCategoria.Despesa, "#f97316"),
         ("Lazer",         TipoCategoria.Despesa, "#a855f7"),
-        ("Moradia",       TipoCategoria.Despesa, "#ef4444"),
-        ("Saúde",         TipoCategoria.Despesa, "#ec4899"),
-        ("Educação",      TipoCategoria.Despesa, "#eab308"),
+        ("Passeios",      TipoCategoria.Despesa, "#ec4899"),
+        ("Despesas",      TipoCategoria.Despesa, "#3b82f6"),
     };
 
     public AuthService(AppDbContext db, ITokenService tokenService)
