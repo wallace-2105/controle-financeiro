@@ -6,7 +6,9 @@ Sistema de controle financeiro pessoal — cadastre suas receitas e despesas, ac
 
 <img width="953" height="538" alt="image" src="https://github.com/user-attachments/assets/49c7ec41-4ce1-4b1d-84f3-fe2b40932f60" />
 
-<img width="959" height="539" alt="Captura de tela 2026-07-28 135521" src="https://github.com/user-attachments/assets/0a39c62d-d96d-462e-89ef-ea62ccf86294" />
+
+
+<img width="953" height="539" alt="image" src="https://github.com/user-attachments/assets/d20bb28c-9979-4d56-a15e-e4eb652361dd" />
 
 
 
