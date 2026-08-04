@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { AppLayout } from "@/components/finance/AppLayout";
 import { TransacaoTabela } from "@/components/finance/TransacaoTabela";
 import { TransacaoForm } from "@/components/finance/TransacaoForm";
@@ -21,9 +21,15 @@ import { useCategorias } from "@/hooks/use-categorias";
 import { useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import type { TransacaoAPI } from "@/services/api";
+import { isAuthenticated } from "@/services/api";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/transacoes")({
+  beforeLoad: () => {
+    if (!isAuthenticated()) {
+      throw redirect({ to: "/login" });
+    }
+  },
   head: () => ({
     meta: [
       { title: "Transações — Controle Financeiro" },

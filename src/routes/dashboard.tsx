@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { AppLayout } from "@/components/finance/AppLayout";
 import { ResumoCard } from "@/components/finance/ResumoCard";
 import { GraficoCategorias } from "@/components/finance/GraficoCategorias";
@@ -8,8 +8,14 @@ import { useResumo } from "@/hooks/use-resumo";
 import { useTransacoes } from "@/hooks/use-transacoes";
 import { useMemo, useState } from "react";
 import { ArrowDownRight, ArrowUpRight, Wallet } from "lucide-react";
+import { isAuthenticated } from "@/services/api";
 
 export const Route = createFileRoute("/dashboard")({
+  beforeLoad: () => {
+    if (!isAuthenticated()) {
+      throw redirect({ to: "/login" });
+    }
+  },
   head: () => ({
     meta: [
       { title: "Dashboard — Controle Financeiro" },

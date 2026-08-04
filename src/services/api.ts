@@ -1,16 +1,23 @@
 const API_BASE = "http://localhost:5079/api";
 
+// ── Helpers SSR-safe ──
+
+const isBrowser = typeof window !== "undefined";
+
 // ── Token management ──
 
 function getToken(): string | null {
+  if (!isBrowser) return null;
   return localStorage.getItem("auth_token");
 }
 
 export function setToken(token: string) {
+  if (!isBrowser) return;
   localStorage.setItem("auth_token", token);
 }
 
 export function clearToken() {
+  if (!isBrowser) return;
   localStorage.removeItem("auth_token");
 }
 
@@ -52,6 +59,17 @@ async function request<T>(
   });
 
   if (!response.ok) {
+    // Se o servidor retornou 401, o token expirou ou é inválido.
+    // Limpa a sessão e redireciona para o login.
+    if (response.status === 401 && isBrowser) {
+      clearToken();
+      localStorage.removeItem("auth_user");
+      // Evita loops infinitos se já estiver na página de login
+      if (!window.location.pathname.startsWith("/login")) {
+        window.location.href = "/login";
+      }
+    }
+
     let data: unknown;
     try {
       data = await response.json();

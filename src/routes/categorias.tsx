@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { AppLayout } from "@/components/finance/AppLayout";
 import { CategoriaForm } from "@/components/finance/CategoriaForm";
 import { useCategorias, useDeleteCategoria } from "@/hooks/use-categorias";
@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import type { CategoriaAPI } from "@/services/api";
+import { isAuthenticated } from "@/services/api";
 import { useState } from "react";
 import {
   AlertDialog,
@@ -19,6 +20,11 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/categorias")({
+  beforeLoad: () => {
+    if (!isAuthenticated()) {
+      throw redirect({ to: "/login" });
+    }
+  },
   head: () => ({
     meta: [
       { title: "Categorias — Controle Financeiro" },
