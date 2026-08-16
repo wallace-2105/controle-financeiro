@@ -89,7 +89,7 @@ O frontend sobe em `http://localhost:5173` (porta padrão do Vite).
 - [x] Autenticação via JWT
 - [ ] Transações recorrentes (ex: salário fixo mensal automático)
 - [ ] Metas financeiras
-- [ ] Exportação de relatórios (PDF/Excel)
+
 
 ## Modelagem de dados
 
